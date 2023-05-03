@@ -9,6 +9,8 @@ function stuff() {
     const y = 'stuff2';
     console.log(y);
 
+    const ctn = new Pixi.Container();
+
     console.log(hello('john'));
 
     return x + 1;
