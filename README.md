@@ -30,7 +30,7 @@ Changes `src` folder into `dist` folder applying transformations defined in `tra
 - (demo) NumberToString
 - (ok) OnlyRootImports
 - (todo) RenameImportedPackages
-- (todo ChangeImportSymbols
+- (todo) ChangeImportSymbols
 - (ok) GroupImports
 
 

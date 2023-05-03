@@ -2,11 +2,13 @@ import type { Node, ImportDeclaration } from 'typescript';
 
 import type { NodeVisitor } from 'simple-ts-transform';
 
-import type { MyContext } from './MyContext';
-
 import { isImportDeclaration, factory } from 'typescript';
 
-export default class OnlyRootImports implements NodeVisitor<ImportDeclaration> {
+import buildTransformer from 'simple-ts-transform';
+
+import { MyContext } from '../MyContext';
+
+class OnlyRootImports implements NodeVisitor<ImportDeclaration> {
   public constructor(private readonly context: MyContext) {
     //console.log('cfg', context._configuration);
   }
@@ -39,3 +41,6 @@ export default class OnlyRootImports implements NodeVisitor<ImportDeclaration> {
     return [node];
   }
 }
+
+const transformer = buildTransformer(MyContext, [OnlyRootImports]);
+export default transformer;

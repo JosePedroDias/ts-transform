@@ -2,11 +2,14 @@ import type { Node, ImportDeclaration } from 'typescript';
 
 import type { NodeVisitor } from 'simple-ts-transform';
 
-import type { MyContext } from './MyContext';
-
 import { isImportDeclaration, SyntaxKind, NamedImports, ImportSpecifier, factory } from 'typescript';
 
-export default class GroupImports implements NodeVisitor<ImportDeclaration> {
+import buildTransformer from 'simple-ts-transform';
+
+import { MyContext } from '../MyContext';
+
+
+class GroupImports implements NodeVisitor<ImportDeclaration> {
   private imports: Map<string, string[]> = new Map();
 
   public constructor(private readonly context: MyContext) {
@@ -87,3 +90,6 @@ export default class GroupImports implements NodeVisitor<ImportDeclaration> {
     }
   }
 }
+
+const transformer = buildTransformer(MyContext, [GroupImports]);
+export default transformer;

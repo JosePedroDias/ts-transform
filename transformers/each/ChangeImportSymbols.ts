@@ -2,11 +2,13 @@ import type { Node, ImportDeclaration } from 'typescript';
 
 import type { NodeVisitor } from 'simple-ts-transform';
 
-import type { MyContext } from './MyContext';
-
 import { isImportDeclaration, SyntaxKind, NamedImports, ImportSpecifier } from 'typescript';
 
-export default class ChangeImportSymbols implements NodeVisitor<ImportDeclaration> {
+import buildTransformer from 'simple-ts-transform';
+
+import { MyContext } from '../MyContext';
+
+class ChangeImportSymbols implements NodeVisitor<ImportDeclaration> {
   public constructor(private readonly context: MyContext) {
   }
 
@@ -42,3 +44,6 @@ export default class ChangeImportSymbols implements NodeVisitor<ImportDeclaratio
     return [node];
   }
 }
+
+const transformer = buildTransformer(MyContext, [ChangeImportSymbols]);
+export default transformer;

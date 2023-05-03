@@ -2,11 +2,15 @@ import type { Node, StringLiteral } from 'typescript';
 
 import type { NodeVisitor } from 'simple-ts-transform';
 
-import type { MyContext } from './MyContext';
-
 import { isStringLiteral } from 'typescript';
 
-export default class MyFileNameInserter implements NodeVisitor<StringLiteral> {
+import buildTransformer from 'simple-ts-transform';
+
+import { MyContext } from '../MyContext';
+
+// (this is the example in the simple-ts-transform's README.md)
+
+class MyFileNameInserter implements NodeVisitor<StringLiteral> {
   private readonly fileName: string;
 
   public constructor(private readonly context: MyContext) {
@@ -24,3 +28,6 @@ export default class MyFileNameInserter implements NodeVisitor<StringLiteral> {
     ];
   }
 }
+
+const transformer = buildTransformer(MyContext, [MyFileNameInserter]);
+export default transformer;

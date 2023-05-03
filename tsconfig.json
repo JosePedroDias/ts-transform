@@ -8,20 +8,21 @@
         "declaration": false,
         //"target": "ESNext",
         "plugins": [
-            {
-                "transform": "./transformers/index.ts",
-                //"type": "config",
-                //"type": "raw",
-                "renamedPackages": [
-                    ["@arkadium/game-core", "@arkadium/game-core-engine"],
-                    ["@arkadium/game-core-plugins", "@arkadium/game-core-plugin-ui"],
-                ],
-                "renamedSymbols": {
-                    "@arkadium/game-core-engine": {
-                        "Container": "IOCContainer"
-                    }
-                }
-            }
+            // { "transform": "./transformers/each/NumberToString.ts" },
+            // { "transform": "./transformers/each/MyFileNameInserter.ts" },
+            // { "transform": "./transformers/each/OnlyRootImports.ts" },
+            // { "transform": "./transformers/each/GroupImports.ts" },
+            // {
+            //     "renamedPackages": [
+            //         ["@arkadium/game-core", "@arkadium/game-core-engine"],
+            //         ["@arkadium/game-core-plugins", "@arkadium/game-core-plugin-ui"],
+            //     ],
+            //     "renamedSymbols": {
+            //         "@arkadium/game-core-engine": {
+            //             "Container": "IOCContainer"
+            //         }
+            //     }
+            // }
         ]
     },
     "include": [

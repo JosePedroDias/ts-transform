@@ -2,11 +2,13 @@ import type { Node, NumericLiteral } from 'typescript';
 
 import type { NodeVisitor } from 'simple-ts-transform';
 
-import type { MyContext } from './MyContext';
-
 import { isNumericLiteral } from 'typescript';
 
-export default class NumberToString implements NodeVisitor<NumericLiteral> {
+import buildTransformer from 'simple-ts-transform';
+
+import { MyContext } from '../MyContext';
+
+class NumberToString implements NodeVisitor<NumericLiteral> {
   public constructor(private readonly context: MyContext) {
   }
 
@@ -21,3 +23,6 @@ export default class NumberToString implements NodeVisitor<NumericLiteral> {
     ];
   }
 }
+
+const transformer = buildTransformer(MyContext, [NumberToString]);
+export default transformer;
