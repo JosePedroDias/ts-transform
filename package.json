@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "ts-transform",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "build": "ttsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "simple-ts-transform": "^1.2.0",
+    "ttypescript": "^1.5.15"
+  }
+}

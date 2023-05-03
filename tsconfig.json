@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+        "module": "ESNext",
+        "removeComments": false,
+        "sourceMap": false,
+        "declaration": false,
+        "target": "ESNext",
+        "plugins": [
+            {
+                "transform": "./transformers/index.ts",
+            }
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+}
