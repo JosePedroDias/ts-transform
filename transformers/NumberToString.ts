@@ -6,11 +6,8 @@ import type { MyContext } from './MyContext';
 
 import { isNumericLiteral } from 'typescript';
 
-export default class MyFileNameInserter implements NodeVisitor<NumericLiteral> {
-  private readonly fileName: string;
-
+export default class NumberToString implements NodeVisitor<NumericLiteral> {
   public constructor(private readonly context: MyContext) {
-    this.fileName = context.fileName;
   }
 
   public wants(node: Node): node is NumericLiteral {

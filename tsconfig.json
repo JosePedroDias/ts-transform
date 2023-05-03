@@ -6,10 +6,21 @@
         "removeComments": false,
         "sourceMap": false,
         "declaration": false,
-        "target": "ESNext",
+        //"target": "ESNext",
         "plugins": [
             {
                 "transform": "./transformers/index.ts",
+                //"type": "config",
+                //"type": "raw",
+                "renamedPackages": [
+                    ["@arkadium/game-core", "@arkadium/game-core-engine"],
+                    ["@arkadium/game-core-plugins", "@arkadium/game-core-plugin-ui"],
+                ],
+                "renamedSymbols": {
+                    "@arkadium/game-core-engine": {
+                        "Container": "IOCContainer"
+                    }
+                }
             }
         ]
     },
