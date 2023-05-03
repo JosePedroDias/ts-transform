@@ -3,27 +3,12 @@
         "rootDir": "src",
         "outDir": "dist",
         "module": "ESNext",
+        "target": "ESNext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
         "removeComments": false,
         "sourceMap": false,
         "declaration": false,
-        //"target": "ESNext",
-        "plugins": [
-            // { "transform": "./transformers/each/NumberToString.ts" },
-            // { "transform": "./transformers/each/MyFileNameInserter.ts" },
-            // { "transform": "./transformers/each/OnlyRootImports.ts" },
-            // { "transform": "./transformers/each/GroupImports.ts" },
-            // {
-            //     "renamedPackages": [
-            //         ["@arkadium/game-core", "@arkadium/game-core-engine"],
-            //         ["@arkadium/game-core-plugins", "@arkadium/game-core-plugin-ui"],
-            //     ],
-            //     "renamedSymbols": {
-            //         "@arkadium/game-core-engine": {
-            //             "Container": "IOCContainer"
-            //         }
-            //     }
-            // }
-        ]
     },
     "include": [
         "src/**/*.ts"
