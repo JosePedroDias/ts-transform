@@ -28,7 +28,8 @@ node recast-test.mjs
     - https://www.codeshiftcommunity.com/docs/prompting-for-human-input
 - https://github.com/sejoker/awesome-jscodeshift
 - https://www.toptal.com/javascript/write-code-to-rewrite-your-code
-- https://morioh.com/p/51e123f76df9
+- https://github.com/facebook/jscodeshift
+- https://github.com/benjamn/recast
 - https://github.com/mainmatter/ast-workshop/blob/master/README.md
 
 ## some notes

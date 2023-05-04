@@ -4,12 +4,14 @@ import globalToExplicitImport from './globalToExplicitImport';
 import groupPackages from './groupPackages';
 import avoidRequires from './avoidRequires';
 import addHeaderComment from './addHeaderComment';
+import changeConstructorCall from './changeConstructorCall';
 
 const TRANSFORMS = [
-    globalToExplicitImport, // used to make sure pixi.js symbols are ESM imported
-    //avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
-    //groupPackages,
-    //addHeaderComment,
+    // globalToExplicitImport, // used to make sure pixi.js symbols are ESM imported
+    // avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
+    // groupPackages, // major refactoring and organizing of imports
+    // addHeaderComment, // legalese
+    changeConstructorCall,
 ];
 
 /*

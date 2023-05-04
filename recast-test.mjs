@@ -1,15 +1,22 @@
 import { parse, print, prettyPrint, types, visit, run } from "recast";
 import tsParser from "recast/parsers/typescript.js";
 
-//const b = recast.types.builders; // to create new nodes
-// console.log(Object.keys(types.namedTypes));
+//const b = types.builders; // to create new nodes
+const nt = types.namedTypes; // console.log(Object.keys(nt));
 
-const source = `/* hello
-world */
-function hi(name: string) { return \`\${name}\`}
-// line comment
-console.log('x');
-(<PIXI.Point>this._goModeScoreText.anchor).set(0.5, 0.5);`;
+const source = `
+const a = new PIXI.extras.BitmapText("10", {
+    font: '23px sans-serif'
+});
+
+const c = new BitmapText("10", {
+    font: '23px sans-serif'
+});
+
+/*const fnt = '23px sans-serif';
+const b = new PIXI.BitmapText("10", {
+    font: fnt
+});*/`;
 
 const ast = parse(
     source,
@@ -24,7 +31,7 @@ const ast = parse(
 //console.log(ast.program.body); // array of nodes
 
 // traverse!
-/*const typeExamples = new Map();
+const typeExamples = new Map();
 visit(ast, {
     visitNode: function(path) {
         const node = path.value;
@@ -32,15 +39,17 @@ visit(ast, {
         const code = print(node).code;
 
         console.log("\n->", type, '\n', code);
-        typeExamples.set(type, code);
+        //typeExamples.set(type, code);
+        if (nt.NewExpression.check(node)) {
+            console.log(node);
+        }
 
         //typeExamples.set(type, node);
 
         this.traverse(path);
     }
 });
-console.log(Array.from(typeExamples.keys()));
-console.log(typeExamples);*/
+// console.log(Array.from(typeExamples.keys())); console.log(typeExamples);
 
 const output = print(ast).code;
 //const output = prettyPrint(ast, { tabWidth: 2 }).code;
