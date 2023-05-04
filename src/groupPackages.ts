@@ -3,7 +3,21 @@ import { API, FileInfo } from 'jscodeshift';
 /*
 - simplifies package names (drop paths)
 - group symbols of the same package and sort them alphabetically
+- package names can be renamed according to PACKAGES_TO_RENAME
+- symbols import in packages can be renamed according to SYMBOLS_TO_RENAME and have their identifiers corrected
 */
+
+const PACKAGES_TO_RENAME: { [key: string]: string } = {
+    '@arkadium/game-core': '@arkadium/game-core-engine',
+    '@arkadium/game-core-plugins': '@arkadium/game-core-plugin-ui',
+};
+
+const SYMBOLS_TO_RENAME: { [key: string]: { [key2: string]: string } } = {
+    '@arkadium/game-core-engine': {
+        Container: 'IOCContainer',
+    }
+};
+
 
 function simplifyPackageName(s: string) {
     if (s[0] !== '@') return s;
@@ -14,11 +28,15 @@ function simplifyPackageName(s: string) {
     return parts.join('/');
 }
 
+
+
 export default function transformer(file: FileInfo, api: API) {
     const j = api.jscodeshift;
     const root = j(file.source);
 
     const imports = new Map<string, string[]>();
+
+    const identifierRenames = new Map<string, string>();
 
     root.find(j.ImportDeclaration).forEach((path) => {
         // console.log('*****', j(path).toSource() );
@@ -27,9 +45,28 @@ export default function transformer(file: FileInfo, api: API) {
         // console.log(path.node.specifiers.map(spec => spec.local.name ));
         // path.node.specifiers.forEach(spec => { spec.local.name += 'z'; });
 
-        const packageName = simplifyPackageName(path.node.source.value as string);
         if (!path.node.specifiers) return;
-        let symbols = path.node.specifiers.map(spec => spec.local?.name).filter(sym => Boolean(sym)) as string[];
+        let packageName = simplifyPackageName(path.node.source.value as string);
+        const newPackageName = PACKAGES_TO_RENAME[packageName];
+        if (newPackageName) {
+            packageName = newPackageName;
+        }
+
+        const renameBag = SYMBOLS_TO_RENAME[packageName];
+
+        let symbols = path.node.specifiers
+        .map(spec => spec.local?.name)
+        .map(sym => {
+            if (renameBag && sym) {
+                const newSym = renameBag[sym];
+                if (newSym) {
+                    identifierRenames.set(sym, newSym);
+                    return newSym;
+                }
+            }
+            return sym;
+        })
+        .filter(sym => Boolean(sym)) as string[];
 
         let prevSymbols: string[] | undefined = imports.get(packageName);
         if (prevSymbols) {
@@ -42,6 +79,7 @@ export default function transformer(file: FileInfo, api: API) {
 
     // console.log(imports);
 
+    // add grouped packages with sorted symbols
     const entries = imports.entries();
     for (const [packageName, symbols] of entries) {
         symbols.sort();
@@ -52,6 +90,16 @@ export default function transformer(file: FileInfo, api: API) {
 
         root.get().node.program.body.unshift(decl);
     }
+
+    // make sure to rename identifiers affected by changed symbols
+    root.find( j.Identifier ).forEach((path) => {
+        const v = path.value.name;
+        for (const [oldName, newName] of identifierRenames.entries()) {
+            if (v === oldName) {
+                path.value.name = newName;
+            }
+        }
+    });
     
     return root.toSource();
 }
