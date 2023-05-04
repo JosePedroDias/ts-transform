@@ -26,11 +26,6 @@ export default function transformer(file: FileInfo, api: API) {
         }
     });
 
-    let child0;
-    root.find(j.Statement).forEach((path) => {
-        if (!child0) child0 = path;
-    });
-
     const symbols2 = Array.from(symbols);
     symbols2.sort();
 
@@ -40,7 +35,7 @@ export default function transformer(file: FileInfo, api: API) {
             j.stringLiteral('pixi.js')
         );
     
-        j(child0).insertBefore(decl);
+        root.get().node.program.body.unshift(decl);
     }
 
     return root.toSource();

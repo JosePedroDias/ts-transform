@@ -28,7 +28,8 @@ export default function transformer(file: FileInfo, api: API) {
         // path.node.specifiers.forEach(spec => { spec.local.name += 'z'; });
 
         const packageName = simplifyPackageName(path.node.source.value as string);
-        let symbols = path.node.specifiers.map(spec => spec.local.name);
+        if (!path.node.specifiers) return;
+        let symbols = path.node.specifiers.map(spec => spec.local?.name).filter(sym => Boolean(sym)) as string[];
 
         let prevSymbols: string[] | undefined = imports.get(packageName);
         if (prevSymbols) {
@@ -49,12 +50,7 @@ export default function transformer(file: FileInfo, api: API) {
             j.stringLiteral(packageName)
         );
 
-        let child0;
-        root.find(j.Statement).forEach((path) => {
-            if (!child0) child0 = path;
-        });
-
-        j(child0).insertBefore(decl);
+        root.get().node.program.body.unshift(decl);
     }
     
     return root.toSource();

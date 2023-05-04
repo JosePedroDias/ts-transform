@@ -17,3 +17,4 @@ npm run codemod      -- -t dist/all.js example-src/*
 ## auxiliary resources
 
 - https://rajasegar.github.io/ast-finder/
+- https://www.codeshiftcommunity.com/
