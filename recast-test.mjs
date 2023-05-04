@@ -2,18 +2,14 @@ import { parse, print, prettyPrint, types, visit, run } from "recast";
 import tsParser from "recast/parsers/typescript.js";
 
 //const b = recast.types.builders; // to create new nodes
-
 // console.log(Object.keys(types.namedTypes));
 
-//const source = `function hi(name) { return \`\${name}\`}`;
-// const source = `/* hello
-// world */
-// function hi(name: string) { return \`\${name}\`}
-// // line comment
-// console.log('x')`;
-const source = `(<PIXI.Point>this._goModeScoreText.anchor).set(0.5, 0.5)`;
-
-// console.log(print(parse(source)).code);
+const source = `/* hello
+world */
+function hi(name: string) { return \`\${name}\`}
+// line comment
+console.log('x');
+(<PIXI.Point>this._goModeScoreText.anchor).set(0.5, 0.5);`;
 
 const ast = parse(
     source,
@@ -27,10 +23,8 @@ const ast = parse(
 //console.log(ast.program); // type: Program
 //console.log(ast.program.body); // array of nodes
 
-//ast.program.body
-
 // traverse!
-const typeExamples = new Map();
+/*const typeExamples = new Map();
 visit(ast, {
     visitNode: function(path) {
         const node = path.value;
@@ -46,10 +40,9 @@ visit(ast, {
     }
 });
 console.log(Array.from(typeExamples.keys()));
-console.log(typeExamples);
+console.log(typeExamples);*/
 
-//const output = print(ast).code;
+const output = print(ast).code;
 //const output = prettyPrint(ast, { tabWidth: 2 }).code;
-//console.log(output);
-
-//console.log(print(parse(source)).code);
+console.log(output);
+//console.log(output === source);

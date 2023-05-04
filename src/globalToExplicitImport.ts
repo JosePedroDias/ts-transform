@@ -1,4 +1,4 @@
-import { API, FileInfo, Identifier, TSQualifiedName } from 'jscodeshift';
+import { API, FileInfo, Identifier } from 'jscodeshift';
 
 const GLOBAL_NAME = 'PIXI';
 const PACKAGE_NAME = 'pixi.js';
@@ -18,10 +18,8 @@ export default function transformer(file: FileInfo, { j }: API) {
     const symbols = new Set<string>();
 
     root.find(j.MemberExpression).forEach(path => {
-        //console.log('***', j(path).toSource());
-
+        //console.log('***', j(path).toSource(), path.node);
         const object = (path.node.object as any).name;
-        
         if (object === GLOBAL_NAME) {
             const property = (path.node.property as any).name;
             const identifier = j.identifier( property );
@@ -32,10 +30,7 @@ export default function transformer(file: FileInfo, { j }: API) {
     });
 
     root.find(j.TSQualifiedName).forEach(path => {
-        //console.log('***', j(path).toSource());
-
-        //console.log(path.node);
-
+        //console.log('***', j(path).toSource(), path.node);
         const node = path.node;
         if (j.Identifier.check(node.left)) {
             const nodeLeft = <Identifier>(node.left);
