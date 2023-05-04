@@ -30,8 +30,7 @@ function simplifyPackageName(s: string) {
     return parts.join('/');
 }
 
-export default function transformer(file: FileInfo, api: API) {
-    const j = api.jscodeshift;
+export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
 
     const imports = new Map<string, string[]>();

@@ -13,8 +13,7 @@ const headerContent = `!@license
  * Proprietary and confidential
  `;
 
-export default function transformer(file: FileInfo, api: API) {
-    const j = api.jscodeshift;
+export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
 
     const progBodyNode = j(root.get().node.program.body).get().node;

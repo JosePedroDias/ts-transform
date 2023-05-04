@@ -6,8 +6,7 @@ import { API, FileInfo } from 'jscodeshift';
 
 const ACCEPTABLE_EXTENSIONS = ['json', 'css', 'txt'];
 
-export default function transformer(file: FileInfo, api: API) {
-    const j = api.jscodeshift;
+export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
 
     let isDirty = false;

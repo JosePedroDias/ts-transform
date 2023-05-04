@@ -16,11 +16,11 @@ const TRANSFORMS = [
 runs all codemods in sequence
 */
 
-export default function transformer(file: FileInfo, api: API) {
+export default function transformer(file: FileInfo, api: API, options: any) {
     const trans = TRANSFORMS.slice();
     let nextTrans;
     while (nextTrans = trans.shift()) {
-        file.source = nextTrans(file, api);
+        file.source = nextTrans(file, api, options);
     }
     return file.source;
 };

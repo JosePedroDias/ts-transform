@@ -15,6 +15,7 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "jscodeshift": "^0.14.0"
+    "jscodeshift": "^0.14.0",
+    "recast": "^0.22.0"
   }
 }
