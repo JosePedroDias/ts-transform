@@ -23,3 +23,4 @@ npm run codemod      -- -t dist/all.js example-src/*
     - https://www.codeshiftcommunity.com/docs/typescript
     - https://www.codeshiftcommunity.com/docs/prompting-for-human-input
 - https://github.com/sejoker/awesome-jscodeshift
+- commentBlock and commentLine exist in comments of other nodes

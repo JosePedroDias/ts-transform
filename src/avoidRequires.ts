@@ -10,6 +10,7 @@ export default function transformer(file: FileInfo, api: API) {
     const j = api.jscodeshift;
     const root = j(file.source);
 
+    let isDirty = false;
 
     root.find(j.CallExpression).forEach(path => {
         // console.log('***', j(path).toSource());
@@ -22,10 +23,11 @@ export default function transformer(file: FileInfo, api: API) {
             // console.log('require', args[0], ext, ok);
             path.value.comments = path.value.comments || [];
             if (!ok) {
+                isDirty = true;
                 path.value.comments.push(j.commentBlock(' TODO replace with an import! ', false, true));
             }
         }
     });
 
-    return root.toSource();
+    return isDirty ? root.toSource() : file.source;;
 }

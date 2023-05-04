@@ -7,6 +7,9 @@ import { API, FileInfo } from 'jscodeshift';
 - symbols import in packages can be renamed according to SYMBOLS_TO_RENAME and have their identifiers corrected
 */
 
+// TODO sort imports [ starting with alpha, @ [ ], . ]
+// TODO drop unused symbols?
+
 const PACKAGES_TO_RENAME: { [key: string]: string } = {
     '@arkadium/game-core': '@arkadium/game-core-engine',
     '@arkadium/game-core-plugins': '@arkadium/game-core-plugin-ui',
@@ -18,7 +21,6 @@ const SYMBOLS_TO_RENAME: { [key: string]: { [key2: string]: string } } = {
     }
 };
 
-
 function simplifyPackageName(s: string) {
     if (s[0] !== '@') return s;
     let parts = s.split('/');
@@ -27,8 +29,6 @@ function simplifyPackageName(s: string) {
     }
     return parts.join('/');
 }
-
-
 
 export default function transformer(file: FileInfo, api: API) {
     const j = api.jscodeshift;
