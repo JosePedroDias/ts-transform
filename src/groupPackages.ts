@@ -1,4 +1,4 @@
-import { API, FileInfo } from 'jscodeshift';
+import { API, FileInfo, ImportSpecifier } from 'jscodeshift';
 
 /*
 - simplifies package names (drop paths)
@@ -7,8 +7,10 @@ import { API, FileInfo } from 'jscodeshift';
 - symbols import in packages can be renamed according to SYMBOLS_TO_RENAME and have their identifiers corrected
 */
 
+// TODO keep custom alias if it existed (and rename that alias!)
 // TODO sort imports [ starting with alpha, @ [ ], . ]
 // TODO drop unused symbols?
+
 
 const PACKAGES_TO_RENAME: { [key: string]: string } = {
     '@arkadium/game-core': '@arkadium/game-core-engine',
@@ -30,19 +32,17 @@ function simplifyPackageName(s: string) {
     return parts.join('/');
 }
 
+type SymbolAsPair = [string, string]; // imported.name / local.name
+
 export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
 
-    const imports = new Map<string, string[]>();
+    const imports = new Map<string, SymbolAsPair[]>();
 
     const identifierRenames = new Map<string, string>();
 
     root.find(j.ImportDeclaration).forEach((path) => {
         // console.log('*****', j(path).toSource() );
-        // console.log(path.node.source.value);
-        // path.node.source.value += "x";
-        // console.log(path.node.specifiers.map(spec => spec.local.name ));
-        // path.node.specifiers.forEach(spec => { spec.local.name += 'z'; });
 
         if (!path.node.specifiers) return;
         let packageName = simplifyPackageName(path.node.source.value as string);
@@ -53,21 +53,25 @@ export default function transformer(file: FileInfo, { j }: API) {
 
         const renameBag = SYMBOLS_TO_RENAME[packageName];
 
-        let symbols = path.node.specifiers
-        .map(spec => spec.local?.name)
-        .map(sym => {
-            if (renameBag && sym) {
-                const newSym = renameBag[sym];
+        let symbols: SymbolAsPair[] = path.node.specifiers
+        .map((spec: ImportSpecifier) => [spec.imported.name, spec.local.name])
+        .map(([importedName, localName]) => {
+            if (renameBag && importedName) {
+                const newSym = renameBag[importedName];
                 if (newSym) {
-                    identifierRenames.set(sym, newSym);
-                    return newSym;
+                    const oldLocalName = localName;
+                    if (localName === importedName) localName = newSym
+                    importedName = newSym;
+                    if (localName !== oldLocalName) {
+                        identifierRenames.set(oldLocalName, localName);
+                    }
                 }
             }
-            return sym;
-        })
-        .filter(sym => Boolean(sym)) as string[];
+            return [importedName, localName];
+        });
+        //.filter(sym => Boolean(sym)) as string[];
 
-        let prevSymbols: string[] | undefined = imports.get(packageName);
+        let prevSymbols: SymbolAsPair[] | undefined = imports.get(packageName);
         if (prevSymbols) {
             symbols = [...prevSymbols, ...symbols];
         }
@@ -81,9 +85,9 @@ export default function transformer(file: FileInfo, { j }: API) {
     // add grouped packages with sorted symbols
     const entries = imports.entries();
     for (const [packageName, symbols] of entries) {
-        symbols.sort();
+        // symbols.sort(); // TODO
         const decl = j.importDeclaration(
-            symbols.map(sym => j.importSpecifier(j.identifier(sym), j.identifier(sym))),
+            symbols.map(([importedName, localName]) => j.importSpecifier(j.identifier(importedName), j.identifier(localName))),
             j.stringLiteral(packageName)
         );
 

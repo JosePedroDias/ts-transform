@@ -3,15 +3,15 @@ import { API, FileInfo } from 'jscodeshift';
 import globalToExplicitImport from './globalToExplicitImport';
 import groupPackages from './groupPackages';
 import avoidRequires from './avoidRequires';
-import addHeaderComment from './addHeaderComment';
 import changeConstructorCall from './changeConstructorCall';
+import addHeaderComment from './addHeaderComment';
 
 const TRANSFORMS = [
-    globalToExplicitImport, // used to make sure pixi.js symbols are ESM imported
-    avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
+    //globalToExplicitImport, // used to make sure pixi.js symbols are ESM imported
+    //avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
     groupPackages, // major refactoring and organizing of imports
-    addHeaderComment, // legalese
-    changeConstructorCall, // change BitmapText options from font to fontSize and fontName
+    //changeConstructorCall, // change BitmapText options from font to fontSize and fontName
+    //addHeaderComment, // legalese
 ];
 
 /*

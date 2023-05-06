@@ -5,18 +5,8 @@ import tsParser from "recast/parsers/typescript.js";
 const nt = types.namedTypes; // console.log(Object.keys(nt));
 
 const source = `
-const a = new PIXI.extras.BitmapText("10", {
-    font: '23px sans-serif'
-});
-
-const c = new BitmapText("10", {
-    font: '23px sans-serif'
-});
-
-/*const fnt = '23px sans-serif';
-const b = new PIXI.BitmapText("10", {
-    font: fnt
-});*/`;
+import { x } from 'p1';
+import { y as yAlias } from 'p2';`;
 
 const ast = parse(
     source,
@@ -40,7 +30,7 @@ visit(ast, {
 
         console.log("\n->", type, '\n', code);
         //typeExamples.set(type, code);
-        if (nt.NewExpression.check(node)) {
+        if (nt.ImportSpecifier.check(node)) {
             console.log(node);
         }
 

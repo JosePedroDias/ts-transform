@@ -20,7 +20,9 @@ node recast-test.mjs
 
 ## auxiliary resources
 
-- https://rajasegar.github.io/ast-finder/
+- https://rajasegar.github.io/ast-finder/ (to get find queries)
+- https://astexplorer.net (parser: typescript-eslint/parser ?) (to see the AST generated from code)
+
 - https://www.codeshiftcommunity.com/
     - https://www.codeshiftcommunity.com/docs/your-first-codemod
     - https://www.codeshiftcommunity.com/docs/import-manipulation
