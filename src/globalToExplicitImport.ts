@@ -3,7 +3,7 @@ import { API, FileInfo, Identifier } from 'jscodeshift';
 type Pair = { globalName: string, packageName: string | undefined };
 
 const PAIRS:Pair[] = [
-    { globalName: 'extras', packageName: undefined },
+    //{ globalName: 'extras', packageName: undefined },
     { globalName: 'PIXI', packageName: 'pixi.js' },
 ];
 
@@ -16,9 +16,12 @@ global to explicit import
 */
 
 export default function transformer(file: FileInfo, { j }: API) {
-    const root = j(file.source);
+    // hack 
+    const source = file.source.replace(/extras\./g, '').replace(/extras/g, '');
 
-    let isDirty = false;
+    let isDirty = source !== file.source;
+
+    const root = j(source);
 
     const symbols = new Set<string>();
 

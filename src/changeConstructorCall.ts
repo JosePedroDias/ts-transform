@@ -15,24 +15,41 @@ npm run codemod -- -t dist/all.js /Users/josepedrodias/Work/msft-jewel-plus/src/
 /Users/josepedrodias/Work/msft-jewel-plus/src/game/Views/GameScreen/ScorePanelView.ts
 */
 
+// '32px monospace' => [32, monospace]
+const FONT_RGX = /([0-9]+)px (.+)/;
+
 export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
 
     let isDirty = false;
 
     const onCtorArguments = (neNode: NewExpression) => {
-        if (neNode.arguments.length >= 2) { // #0: text, #1: options
+        if (neNode.arguments.length >= 2) {
             if (j.ObjectExpression.check(neNode.arguments[1])) {
-                const objPropNode = <ObjectProperty> j(neNode).find(j.ObjectProperty, { key: { name: 'font' }}).paths()[0]?.value;
+                const objExpNode = <ObjectExpression> neNode.arguments[1];
 
-                if (objPropNode && j.StringLiteral.check(objPropNode.value)) {
-                    const fontStringValueNode = <StringLiteral> objPropNode.value;
-                    console.log('fontStringValueNode', fontStringValueNode.value);
+                const objPropFontNode = <ObjectProperty> j(objExpNode).find(j.ObjectProperty, { key: { name: 'font' }}).paths()[0].value;
+                if (objPropFontNode && j.StringLiteral.check(objPropFontNode.value)) {
+                    const fontStringValueNode = <StringLiteral> objPropFontNode.value;
+                    const m = FONT_RGX.exec(fontStringValueNode.value);
 
-                    // TODO remove font prop
-                    // TODO grab values for name and size
-                    // TODO create fontName prod
-                    // TODO create fontSize prod
+                    const fontSizeValue = parseInt(m[1], 10);
+                    const sizeProp = j.objectProperty(
+                        j.identifier('fontSize'),
+                        j.numericLiteral(fontSizeValue)
+                    );
+                    objExpNode.properties.push(sizeProp);
+                    
+                    const fontNameValue = m[2];
+                    const nameProp = j.objectProperty(
+                        j.identifier('fontName'),
+                        j.stringLiteral(fontNameValue)
+                    );
+                    objExpNode.properties.push(nameProp);
+
+                    isDirty = true;
+
+                    j(objExpNode).find(j.ObjectProperty, { key: { name: 'font' }}).remove();
                 }
             }
         }
@@ -46,14 +63,14 @@ export default function transformer(file: FileInfo, { j }: API) {
             if (j.Identifier.check(calleeNode.property)) {
                 const calleeIdentNode = <Identifier> calleeNode.property;
                 if (calleeIdentNode.name === CLASS_NAME) {
-                    console.log('TODO member', j(path).toSource());
+                    // console.log('TODO member', j(path).toSource());
                     onCtorArguments(neNode);
                 }
             }
         } else if (j.Identifier.check(neNode.callee)) {
             const calleeNode = <Identifier>(neNode.callee);
             if (calleeNode.name === CLASS_NAME) {
-                console.log('TODO non-member', j(path).toSource());
+                // console.log('TODO non-member', j(path).toSource());
                 onCtorArguments(neNode);
             }
         }
