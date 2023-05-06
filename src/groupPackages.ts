@@ -7,9 +7,17 @@ import { API, FileInfo, ImportSpecifier } from 'jscodeshift';
 - symbols import in packages can be renamed according to SYMBOLS_TO_RENAME and have their identifiers corrected
 */
 
-// TODO keep custom alias if it existed (and rename that alias!)
-// TODO sort imports [ starting with alpha, @ [ ], . ]
 // TODO drop unused symbols?
+// TODO add support to default import?
+
+const moduleNameHeuristic = (modName: string): string => {
+    const char0 = modName[0]; // else < @ < .. < .
+    const char1 = modName[1];
+    if (char0 === '@') return `2${modName}`;
+    if (char0 === '.' && char1 === '.') return `3${modName}`;
+    if (char0 === '.') return `4${modName}`;
+    return `1${modName}`;
+}
 
 
 const PACKAGES_TO_RENAME: { [key: string]: string } = {
@@ -32,7 +40,7 @@ function simplifyPackageName(s: string) {
     return parts.join('/');
 }
 
-type SymbolAsPair = [string, string]; // imported.name / local.name
+type SymbolAsPair = [string, string]; // [imported.name, local.name]
 
 export default function transformer(file: FileInfo, { j }: API) {
     const root = j(file.source);
@@ -54,6 +62,7 @@ export default function transformer(file: FileInfo, { j }: API) {
         const renameBag = SYMBOLS_TO_RENAME[packageName];
 
         let symbols: SymbolAsPair[] = path.node.specifiers
+        .filter(spec => j.ImportSpecifier.check(spec)) // discard ImportDefaultSpecifier, discard ImportNamespaceSpecifier
         .map((spec: ImportSpecifier) => [spec.imported.name, spec.local.name])
         .map(([importedName, localName]) => {
             if (renameBag && importedName) {
@@ -69,7 +78,6 @@ export default function transformer(file: FileInfo, { j }: API) {
             }
             return [importedName, localName];
         });
-        //.filter(sym => Boolean(sym)) as string[];
 
         let prevSymbols: SymbolAsPair[] | undefined = imports.get(packageName);
         if (prevSymbols) {
@@ -83,9 +91,20 @@ export default function transformer(file: FileInfo, { j }: API) {
     // console.log(imports);
 
     // add grouped packages with sorted symbols
-    const entries = imports.entries();
+    const entries = Array.from(imports.entries());
+    entries.sort((a_, b_) => {
+        const a = moduleNameHeuristic(a_[0]);
+        const b = moduleNameHeuristic(b_[0]);
+        return a > b ? 1 : a < b ? -1 : 0;
+    });
+    entries.reverse(); // because we're unshifting next...
+
     for (const [packageName, symbols] of entries) {
-        // symbols.sort(); // TODO
+        symbols.sort((a_, b_) => {
+            const a = a_[0];
+            const b = b_[0];
+            return a > b ? 1 : a < b ? -1 : 0;
+        });
         const decl = j.importDeclaration(
             symbols.map(([importedName, localName]) => j.importSpecifier(j.identifier(importedName), j.identifier(localName))),
             j.stringLiteral(packageName)
