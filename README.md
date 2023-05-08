@@ -37,7 +37,7 @@ node recast-test.mjs
 ## some notes
 
 - `commentBlock` and `commentLine` exist in optional `.comments` array of other nodes, not as dedicated nodes. this poses no problem for editing existing nodes, but if you want to remove nodes and keep the nearby comments, you should append then to the previous or next node.
-comments are tagged with either `leading` or `trailing` boolean attributes.
+comments are tagged with either `leading` or `trailing` boolean attributes. This is mostly relevant for statement-wide nodes such as `ImportDeclaration`.
 - use `root.find(j.Node)` to visit all nodes is jscodeshift
 - to check types of nodes found in jscodeshift (my recast-test.mjs also allows checking that)
 

@@ -4,15 +4,8 @@ import tsParser from "recast/parsers/typescript.js";
 //const b = types.builders; // to create new nodes
 const nt = types.namedTypes; // console.log(Object.keys(nt));
 
-const source = `
-// simple 1
-/* block 2 */
-const a = 42;
-// simple 3
-/* block 4 */
-
-const b = 'stuff';
-`;
+//const source = `import * as PIXI from 'pixi.js'`;
+const source = `const x = require('y')`;
 
 const ignoreKeys = ['loc', 'start', 'end', 'leadingComments', 'trailingComments'];
 // leadingComments
