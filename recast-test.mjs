@@ -5,8 +5,25 @@ import tsParser from "recast/parsers/typescript.js";
 const nt = types.namedTypes; // console.log(Object.keys(nt));
 
 const source = `
-import { x } from 'p1';
-import { y as yAlias } from 'p2';`;
+// simple 1
+/* block 2 */
+const a = 42;
+// simple 3
+/* block 4 */
+
+const b = 'stuff';
+`;
+
+const ignoreKeys = ['loc', 'start', 'end', 'leadingComments', 'trailingComments'];
+// leadingComments
+// trailingComments
+function printSimplifiedAST(ast) {
+    const ast2 = JSON.parse( JSON.stringify(ast, (key, value) => {
+        if (ignoreKeys.includes(key)) return undefined;
+        return value;
+    }));
+    console.log(JSON.stringify(ast2, null, 2));
+}
 
 const ast = parse(
     source,
@@ -21,7 +38,7 @@ const ast = parse(
 //console.log(ast.program.body); // array of nodes
 
 // traverse!
-const typeExamples = new Map();
+/* const typeExamples = new Map();
 visit(ast, {
     visitNode: function(path) {
         const node = path.value;
@@ -38,10 +55,12 @@ visit(ast, {
 
         this.traverse(path);
     }
-});
+}); */
 // console.log(Array.from(typeExamples.keys())); console.log(typeExamples);
 
 const output = print(ast).code;
 //const output = prettyPrint(ast, { tabWidth: 2 }).code;
-console.log(output);
-//console.log(output === source);
+console.log('source', source, '\noutput', output);
+console.log('the same?', output === source);
+
+printSimplifiedAST(ast);

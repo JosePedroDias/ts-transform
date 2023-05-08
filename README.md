@@ -36,9 +36,10 @@ node recast-test.mjs
 
 ## some notes
 
-- `commentBlock` and `commentLine` exist in optional `.comments` array of other nodes, not as dedicated nodes
+- `commentBlock` and `commentLine` exist in optional `.comments` array of other nodes, not as dedicated nodes. this poses no problem for editing existing nodes, but if you want to remove nodes and keep the nearby comments, you should append then to the previous or next node.
+comments are tagged with either `leading` or `trailing` boolean attributes.
 - use `root.find(j.Node)` to visit all nodes is jscodeshift
-- to check types of nodes found in jscodeshift
+- to check types of nodes found in jscodeshift (my recast-test.mjs also allows checking that)
 
 ```ts
 const types = new Set<string>();
@@ -46,3 +47,5 @@ root.find(j.Node).forEach(path => types.add(path.node.type));
 const types2 = Array.from(types); types2.sort();
 console.log(types2);
 ```
+
+- whitespace lines are not stored in the AST. keeping them would require wrapping those as something else around transformations
