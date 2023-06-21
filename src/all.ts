@@ -13,11 +13,11 @@ const TRANSFORMS = [
     whitespaceLineToDebugger,
 
     globalToExplicitImport, // used to make sure pixi.js symbols are ESM imported
-    avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
+    // avoidRequires, // if require is used for uses other than inlining assets, comment for later fixing
     avoidImportNamespace,
     groupPackages, // major refactoring and organizing of imports
     changeConstructorCall, // change BitmapText options from font to fontSize and fontName
-    addHeaderComment, // legalese
+    // addHeaderComment, // legalese
 
     debuggerToWhitespaceLine,
 ];

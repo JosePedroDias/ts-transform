@@ -1,11 +1,35 @@
+import { inspect } from 'node:util';
+
 import { parse, print, prettyPrint, types, visit, run } from "recast";
 import tsParser from "recast/parsers/typescript.js";
 
-//const b = types.builders; // to create new nodes
+// const b = types.builders; // to create new nodes
 const nt = types.namedTypes; // console.log(Object.keys(nt));
 
-//const source = `import * as PIXI from 'pixi.js'`;
-const source = `const x = require('y')`;
+
+
+let source;
+
+/* source = `
+const fs = require('fs'); // TODO
+`; */
+
+/*
+source = `
+const bt = new BitmapText('some text', {
+    fontSize: 32,
+    fontName: 'sans-serif'
+})
+`;
+*/
+
+source = `
+import {Inject} from '@arkadium/game-core';
+import {AnimateViewBase} from '@arkadium/game-core/dist/Base/AnimateViewBase';
+import {Container} from '@arkadium/game-core';
+`
+
+
 
 const ignoreKeys = ['loc', 'start', 'end', 'leadingComments', 'trailingComments'];
 // leadingComments
@@ -15,7 +39,7 @@ function printSimplifiedAST(ast) {
         if (ignoreKeys.includes(key)) return undefined;
         return value;
     }));
-    console.log(JSON.stringify(ast2, null, 2));
+    console.log(inspect(ast2, { colors: true, depth: Infinity }));
 }
 
 const ast = parse(
