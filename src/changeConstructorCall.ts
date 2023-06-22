@@ -28,7 +28,7 @@ export default function transformer(file: FileInfo, { j }: API) {
             if (j.ObjectExpression.check(neNode.arguments[1])) {
                 const objExpNode = <ObjectExpression> neNode.arguments[1];
 
-                const objPropFontNode = <ObjectProperty> j(objExpNode).find(j.ObjectProperty, { key: { name: 'font' }}).paths()[0].value;
+                const objPropFontNode = <ObjectProperty> j(objExpNode).find(j.ObjectProperty, { key: { name: 'font' }}).paths()[0]?.value;
                 if (objPropFontNode && j.StringLiteral.check(objPropFontNode.value)) {
                     const fontStringValueNode = <StringLiteral> objPropFontNode.value;
                     const m = FONT_RGX.exec(fontStringValueNode.value);

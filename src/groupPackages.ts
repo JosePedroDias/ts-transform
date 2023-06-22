@@ -31,6 +31,68 @@ const SYMBOLS_TO_RENAME: { [key: string]: { [key2: string]: string } } = {
     }
 };
 
+const MOVED_SYMBOLS: { [key: string]: string[] } = {
+    '@arkadium/game-core-engine_to_@arkadium/game-core-eagle': [
+        'Eagle',
+        'IEagleConfig',
+        'UserSubscription',
+        'EagleUserProfile',
+        'ErrorTypeEnum',
+        'EagleCloudStorage',
+        'ICloudConfig',
+        'EagleOnlyOnceEvent',
+        'IEaglePaymentConfig',
+        'EaglePayment',
+        'IVirtualCurrency',
+        'EagleVirtualCurrency',
+        'IPurchasableItem',
+        'IPurchasableItemPurchaseRequest',
+        'EaglePurchasableItems',
+        'EagleVirtualItems',
+        'VirtualItemCategory',
+        'VirtualItem',
+        'UserInventory',
+        'UserInventoryUpdateItemRequest',
+        'IVirtualItemConfig',
+        'EagleVirtualItemsManager',
+        'VirtualItemEntity',
+        'ArenaRequestManager',
+        'ArenaTypes',
+        'ArenaPayload',
+        'IArenaEvent',
+        'PurchaseRequestTypes',
+        'ApiGateway',
+    ],
+    '@arkadium/game-core-plugin-ui_to_@arkadium/game-core-plugin-eagle': [
+        'CoreUIEagle',
+        'CoreUITypeEagle',
+        'IUIAvatarOptions',
+        'IUIAvatarPluginOptions',
+        'UIAvatarPluginView',
+        'IUIAvatarPlugin',
+        'UIAvatarPlugin',
+        'UIEagleJson',
+        'IUIEagleOptions',
+        'IUIEaglePluginOptions',
+        'IUIEaglePlugin',
+        'UIEaglePlugin',
+        'UIEaglePurchaseJson',
+        'IUIEaglePurchasePluginOptions',
+        'IUIEaglePurchasePlugin',
+        'UIEaglePurchasePlugin',
+    ]
+};
+
+const MOVED_SYMBOLS2: { [key: string]: string } = {};
+{
+    for (let [k, v] of Object.entries(MOVED_SYMBOLS)) {
+        const [modFrom, modTo] = k.split('_to_');
+        for (const symbol of v) {
+            MOVED_SYMBOLS2[`${symbol}_of_${modFrom}`] = modTo;
+        }
+    }
+}
+
 function simplifyPackageName(s: string) {
     if (s[0] !== '@') return s;
     let parts = s.split('/');
@@ -89,6 +151,26 @@ export default function transformer(file: FileInfo, { j }: API) {
     });
 
     // console.log(imports);
+
+    // fix moved symbols
+    for (const [packageName, symbols] of imports.entries()) {
+        const symbolsToRemove = [];
+        for (let pair of symbols) {
+            const [importedName] = pair;
+            const packageName2 = MOVED_SYMBOLS2[`${importedName}_of_${packageName}`];
+            if (packageName2) {
+                // console.log(`${file.path}: moving symbol ${importedName} from "${packageName}" to "${packageName2}"`);
+                let potentialBag: SymbolAsPair[] | undefined = imports.get(packageName2);
+                if (!potentialBag) {
+                    potentialBag = [];
+                    imports.set(packageName2, potentialBag);
+                }
+                potentialBag.push(pair);
+                symbolsToRemove.push(pair);
+            }
+        }
+        imports.set(packageName, symbols.filter((thisPair) => !symbolsToRemove.includes(thisPair)));
+    }
 
     // add grouped packages with sorted symbols
     const entries = Array.from(imports.entries());
