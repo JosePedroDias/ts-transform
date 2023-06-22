@@ -5,6 +5,7 @@ type Pair = { globalName: string, packageName: string | undefined };
 const PAIRS:Pair[] = [
     //{ globalName: 'extras', packageName: undefined },
     { globalName: 'PIXI', packageName: 'pixi.js' },
+    { globalName: 'THREE', packageName: 'three' },
 ];
 
 /*
